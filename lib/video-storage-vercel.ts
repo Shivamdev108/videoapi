@@ -1,5 +1,4 @@
-import { put, list, del } from "@vercel/blob";
-import { kv } from "@vercel/kv";
+import { put, list, del, head } from "@vercel/blob";
 
 export type VideoMetadata = {
     id: string;
@@ -10,16 +9,44 @@ export type VideoMetadata = {
     uploadedAt: string;
 };
 
-const VIDEOS_KEY = "videos:all";
+const METADATA_FILE = "metadata/videos.json";
 
-// Get all videos from KV store
+// Get all videos from Blob storage
 export async function getAllVideos(): Promise<VideoMetadata[]> {
     try {
-        const videos = await kv.get<VideoMetadata[]>(VIDEOS_KEY);
-        return videos || [];
+        // Try to get the metadata file from Blob
+        const metadataBlob = await list({
+            prefix: METADATA_FILE,
+            limit: 1,
+        });
+
+        if (metadataBlob.blobs.length === 0) {
+            return [];
+        }
+
+        // Fetch the metadata file content
+        const response = await fetch(metadataBlob.blobs[0].url);
+        const videos = await response.json();
+        return videos as VideoMetadata[];
     } catch (error) {
         console.error("Error reading video metadata:", error);
         return [];
+    }
+}
+
+// Save videos metadata to Blob storage
+async function saveMetadata(videos: VideoMetadata[]): Promise<void> {
+    try {
+        const jsonContent = JSON.stringify(videos, null, 2);
+        const blob = new Blob([jsonContent], { type: "application/json" });
+
+        await put(METADATA_FILE, blob, {
+            access: "public",
+            addRandomSuffix: false,
+        });
+    } catch (error) {
+        console.error("Error saving video metadata:", error);
+        throw error;
     }
 }
 
@@ -43,7 +70,7 @@ export async function createVideo(
     try {
         const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-        // Upload to Vercel Blob
+        // Upload video to Vercel Blob
         const blob = await put(`videos/${id}-${file.name}`, file, {
             access: "public",
             addRandomSuffix: false,
@@ -58,10 +85,10 @@ export async function createVideo(
             uploadedAt: new Date().toISOString(),
         };
 
-        // Save metadata to KV
+        // Save metadata
         const videos = await getAllVideos();
         videos.push(video);
-        await kv.set(VIDEOS_KEY, videos);
+        await saveMetadata(videos);
 
         return video;
     } catch (error) {
@@ -84,7 +111,7 @@ export async function updateVideo(
         }
 
         videos[index] = { ...videos[index], ...updates };
-        await kv.set(VIDEOS_KEY, videos);
+        await saveMetadata(videos);
 
         return videos[index];
     } catch (error) {
@@ -113,7 +140,7 @@ export async function deleteVideo(id: string): Promise<boolean> {
 
         // Remove from metadata
         const updatedVideos = videos.filter((v) => v.id !== id);
-        await kv.set(VIDEOS_KEY, updatedVideos);
+        await saveMetadata(updatedVideos);
 
         return true;
     } catch (error) {
