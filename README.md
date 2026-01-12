@@ -1,36 +1,173 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Video API
 
-## Getting Started
+A Next.js-based video upload and management API designed for deployment on Vercel.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Upload videos via API
+- List all uploaded videos
+- Videos stored in Vercel Blob Storage
+- Metadata stored in Vercel KV (Redis)
+- Serverless and scalable
+
+## API Endpoints
+
+### GET `/api/videos`
+Returns a list of all uploaded videos.
+
+**Response:**
+```json
+{
+  "success": true,
+  "videos": [
+    {
+      "title": "Video Title",
+      "description": "Video Description",
+      "url": "https://blob.vercel-storage.com/..."
+    }
+  ]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### POST `/api/upload`
+Upload a new video.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Request (multipart/form-data):**
+- `video`: Video file
+- `title`: Video title (required)
+- `description`: Video description (optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Video uploaded successfully.",
+  "video": {
+    "id": "...",
+    "title": "Video Title",
+    "description": "Video Description",
+    "url": "https://blob.vercel-storage.com/...",
+    "fileName": "video.mp4",
+    "uploadedAt": "2026-01-12T10:00:00.000Z"
+  }
+}
+```
 
-## Learn More
+## Deployment on Vercel
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
+1. A Vercel account
+2. Vercel CLI installed: `npm i -g vercel`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Setup Steps
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Shivamdev108/videoapi.git
+   cd videoapi
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Deploy to Vercel:**
+   ```bash
+   vercel
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Set up Vercel Blob Storage:**
+   - Go to your project on [Vercel Dashboard](https://vercel.com/dashboard)
+   - Navigate to **Storage** tab
+   - Click **Create Database**
+   - Select **Blob**
+   - Follow the setup wizard
+   - The environment variables will be automatically added to your project
+
+5. **Set up Vercel KV (Redis):**
+   - In the same **Storage** tab
+   - Click **Create Database** again
+   - Select **KV**
+   - Follow the setup wizard
+   - The environment variables will be automatically added to your project
+
+6. **Redeploy:**
+   ```bash
+   vercel --prod
+   ```
+
+### Environment Variables
+
+The following environment variables are automatically set by Vercel when you create the storage:
+
+**Vercel Blob:**
+- `BLOB_READ_WRITE_TOKEN`
+
+**Vercel KV:**
+- `KV_URL`
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+- `KV_REST_API_READ_ONLY_TOKEN`
+
+## Local Development
+
+For local development, you'll need to create a `.env.local` file with the Vercel storage credentials:
+
+1. **Get your credentials from Vercel:**
+   - Go to your project settings
+   - Navigate to **Storage** tab
+   - Click on your Blob and KV databases
+   - Copy the environment variables
+
+2. **Create `.env.local`:**
+   ```env
+   BLOB_READ_WRITE_TOKEN=your_blob_token
+   KV_URL=your_kv_url
+   KV_REST_API_URL=your_kv_rest_api_url
+   KV_REST_API_TOKEN=your_kv_rest_api_token
+   KV_REST_API_READ_ONLY_TOKEN=your_kv_rest_api_read_only_token
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open [http://localhost:3000](http://localhost:3000)**
+
+## Tech Stack
+
+- **Framework:** Next.js 15
+- **Runtime:** Node.js
+- **Storage:** Vercel Blob (for video files)
+- **Database:** Vercel KV (for metadata)
+- **Deployment:** Vercel
+
+## File Structure
+
+```
+video-api/
+├── app/
+│   ├── api/
+│   │   ├── upload/
+│   │   │   └── route.ts      # Upload endpoint
+│   │   └── videos/
+│   │       └── route.ts      # List videos endpoint
+│   └── ...
+├── lib/
+│   └── video-storage-vercel.ts  # Storage logic
+├── .env.local                # Local environment variables
+└── README.md
+```
+
+## Notes
+
+- Maximum file size for Vercel Blob on the free tier is 4.5 MB per file
+- For larger files, consider upgrading to Vercel Pro
+- Videos are publicly accessible via their Blob URLs
+- Metadata is stored in Redis (Vercel KV) for fast retrieval
+
+## License
+
+MIT
