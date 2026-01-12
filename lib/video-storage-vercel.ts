@@ -43,6 +43,7 @@ async function saveMetadata(videos: VideoMetadata[]): Promise<void> {
         await put(METADATA_FILE, blob, {
             access: "public",
             addRandomSuffix: false,
+            contentType: "application/json",
         });
     } catch (error) {
         console.error("Error saving video metadata:", error);
@@ -73,7 +74,7 @@ export async function createVideo(
         // Upload video to Vercel Blob
         const blob = await put(`videos/${id}-${file.name}`, file, {
             access: "public",
-            addRandomSuffix: false,
+            addRandomSuffix: true,
         });
 
         const video: VideoMetadata = {
