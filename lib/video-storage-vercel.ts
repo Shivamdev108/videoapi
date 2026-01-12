@@ -37,6 +37,22 @@ export async function getAllVideos(): Promise<VideoMetadata[]> {
 // Save videos metadata to Blob storage
 async function saveMetadata(videos: VideoMetadata[]): Promise<void> {
     try {
+        // Delete old metadata file if it exists
+        try {
+            const existingBlobs = await list({
+                prefix: METADATA_FILE,
+                limit: 1,
+            });
+
+            if (existingBlobs.blobs.length > 0) {
+                await del(existingBlobs.blobs[0].url);
+            }
+        } catch (deleteError) {
+            // Ignore delete errors, file might not exist
+            console.log("No existing metadata to delete");
+        }
+
+        // Create new metadata file
         const jsonContent = JSON.stringify(videos, null, 2);
         const blob = new Blob([jsonContent], { type: "application/json" });
 
