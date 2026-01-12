@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1768213754658-6nre8ec",
+    "title": "1768212300426-kyk49b-istockphoto-1464801423-mp4-480x480-is",
+    "description": "Video imported from uploads folder",
+    "url": "http://localhost:3000/api/uploads/1768212300426-kyk49b-istockphoto-1464801423-mp4-480x480-is.mp4",
+    "fileName": "1768212300426-kyk49b-istockphoto-1464801423-mp4-480x480-is.mp4",
+    "storedPath": "D:\\shivam toss\\video-api\\uploads\\1768212300426-kyk49b-istockphoto-1464801423-mp4-480x480-is.mp4",
+    "uploadedAt": "2026-01-12T10:05:00.431Z"
+  },
+  {
+    "id": "1768214117090-itlngmt",
+    "title": "demo two",
+    "description": "No description provided.",
+    "url": "http://localhost:3000/api/uploads/1768214117073-e2yvhd-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "fileName": "1768214117073-e2yvhd-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "storedPath": "D:\\shivam toss\\video-api\\uploads\\1768214117073-e2yvhd-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "uploadedAt": "2026-01-12T10:35:17.090Z"
+  },
+  {
+    "id": "1768214858793-3nld3x3",
+    "title": "skincare",
+    "description": "skincare video",
+    "url": "http://localhost:3000/api/uploads/1768214858783-nggw96-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "fileName": "1768214858783-nggw96-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "storedPath": "D:\\shivam toss\\video-api\\uploads\\1768214858783-nggw96-istockphoto-1489067560-mp4-480x480-is.mp4",
+    "uploadedAt": "2026-01-12T10:47:38.793Z"
+  },
+  {
+    "id": "1768215441778-otbjlij",
+    "title": "demo3",
+    "description": "demo3",
+    "url": "http://localhost:3000/api/uploads/1768215441760-ooe0zw-istockphoto-1276407560-640_adpp_is.mp4",
+    "fileName": "1768215441760-ooe0zw-istockphoto-1276407560-640_adpp_is.mp4",
+    "storedPath": "D:\\shivam toss\\video-api\\uploads\\1768215441760-ooe0zw-istockphoto-1276407560-640_adpp_is.mp4",
+    "uploadedAt": "2026-01-12T10:57:21.779Z"
+  }
+]
